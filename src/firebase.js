@@ -1,7 +1,7 @@
 import firebase from 'firebase/app'
-import "firbase/auth"
-import "firbase/database"
-import "firbase/storage"
+import "firebase/auth"
+import "firebase/database"
+import "firebase/storage"
   // Initialize Firebase
   var config = {
     apiKey: "AIzaSyDWqIcON1Dcy4HZZV8Yj8zPTlzq6Ja6wSo",
@@ -12,3 +12,5 @@ import "firbase/storage"
     messagingSenderId: "333750957720"
   };
   firebase.initializeApp(config);
+
+  export default firebase
