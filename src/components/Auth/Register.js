@@ -1,6 +1,6 @@
 import React from "react";
 import firebase from "../../firebase";
-import md5 from 'md5';
+import md5 from "md5";
 
 //md5 is used to hash messages
 import {
@@ -20,7 +20,8 @@ class Register extends React.Component {
     password: "",
     passwordConfirmation: "",
     errors: [],
-    loading: false
+    loading: false,
+    usersRef: firebase.database().ref("users")
   };
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
@@ -76,16 +77,19 @@ class Register extends React.Component {
         .auth()
         .createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then(createdUser => {
-          console.log('before',createdUser)
-          createdUser.user.updateProfile({
-            displayName: this.state.username,
-            photoURL: `http://gravatar.com/avatar/${md5(
-              createdUser.user.email
-            )}?d=identicon`
-          })
-          .then(()=>{
-            this.setState({loading:false})
-          })
+          console.log("before", createdUser);
+          createdUser.user
+            .updateProfile({
+              displayName: this.state.username,
+              photoURL: `http://gravatar.com/avatar/${md5(
+                createdUser.user.email
+              )}?d=identicon`
+            })
+            .then(() => {
+              this.saveUser(createdUser).then(() => {
+                console.log("User saved");
+              });
+            });
         })
         .catch(err => {
           console.log(err);
@@ -95,6 +99,14 @@ class Register extends React.Component {
           });
         });
     }
+  };
+
+  //adding new users to the database
+  saveUser = createdUser => {
+    return this.state.usersRef.child(createdUser.user.uid).set({
+      name: createdUser.user.displayName,
+      avatar: createdUser.user.photoURL
+    });
   };
 
   handleInputError = (errors, inputName) => {
