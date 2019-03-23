@@ -18,7 +18,7 @@ class Register extends React.Component {
     password: "",
     passwordConfirmation: "",
     errors: [],
-    loading:false
+    loading: false
   };
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
@@ -68,24 +68,34 @@ class Register extends React.Component {
 
   handleSubmit = event => {
     if (this.isFormValid()) {
-      this.setState({errors:[],loading:true})
+      this.setState({ errors: [], loading: true });
       event.preventDefault();
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then(createdUser => {
           console.log(createdUser);
-          this.setState({loading:false})
+          this.setState({ loading: false });
         })
         .catch(err => {
           console.log(err);
-          this.setState({ errors:this.state.errors.concat(err),loading:false})
+          this.setState({
+            errors: this.state.errors.concat(err),
+            loading: false
+          });
         });
     }
   };
 
   render() {
-    const { username, email, password, passwordConfirmation,errors,loading } = this.state;
+    const {
+      username,
+      email,
+      password,
+      passwordConfirmation,
+      errors,
+      loading
+    } = this.state;
 
     return (
       <Grid textAlign="center" verticalAlign="middle" className="app">
@@ -98,7 +108,7 @@ class Register extends React.Component {
             <Segment stacked>
               <Form.Input
                 fluid
-                name="username" 
+                name="username"
                 icon="user"
                 iconPosition="left"
                 placeholder="username"
@@ -114,6 +124,13 @@ class Register extends React.Component {
                 placeholder="email address"
                 onChange={this.handleChange}
                 value={email}
+                className={
+                  errors.some(error =>
+                    error.message.toLowerCase().includes("email")
+                  )
+                    ? "error"
+                    : ""
+                }
                 type="email"
               />
               <Form.Input
@@ -124,6 +141,13 @@ class Register extends React.Component {
                 placeholder="password"
                 onChange={this.handleChange}
                 value={password}
+                className={
+                  errors.some(error =>
+                    error.message.toLowerCase().includes("password")
+                  )
+                    ? "error"
+                    : ""
+                }
                 type="password"
               />
               <Form.Input
@@ -133,11 +157,23 @@ class Register extends React.Component {
                 iconPosition="left"
                 placeholder="password confirmation"
                 onChange={this.handleChange}
+                className={
+                  errors.some(error =>
+                    error.message.toLowerCase().includes("passwordConfirmation")
+                  )
+                    ? "error"
+                    : ""
+                }
                 value={passwordConfirmation}
                 type="password"
               />
-              <Button disabled={loading}
-              className={loading?'loading':''} color="orange" fluid size="large">
+              <Button
+                disabled={loading}
+                className={loading ? "loading" : ""}
+                color="orange"
+                fluid
+                size="large"
+              >
                 Submit
               </Button>
               <Message>
