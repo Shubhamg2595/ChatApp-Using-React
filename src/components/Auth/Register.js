@@ -33,9 +33,9 @@ class Register extends React.Component {
       return false; //indicates we should not perform handle submit
     } else if (!this.isPasswordValid(this.state)) {
       //throw errors
-      error = {message:"Password is Invalid"}
-      this.setState({errors:errors.concat(error)})
-      return false
+      error = { message: "Password is Invalid" };
+      this.setState({ errors: errors.concat(error) });
+      return false;
     } else {
       //form is valid
       return true;
@@ -61,6 +61,10 @@ class Register extends React.Component {
       return true;
     }
   };
+
+  displayErrors = errors =>
+    errors.map((error, i) => <p key={i}>{error.message}</p>);
+
   handleSubmit = event => {
     if (this.isFormValid()) {
       event.preventDefault();
@@ -77,7 +81,7 @@ class Register extends React.Component {
   };
 
   render() {
-    const { username, email, password, passwordConfirmation } = this.state;
+    const { username, email, password, passwordConfirmation,errors } = this.state;
 
     return (
       <Grid textAlign="center" verticalAlign="middle" className="app">
@@ -136,6 +140,12 @@ class Register extends React.Component {
               </Message>
             </Segment>
           </Form>
+          {errors.length > 0 && (
+            <Message error>
+              <h3>Error</h3>
+              {this.displayErrors(errors)}
+            </Message>
+          )}
         </Grid.Column>
       </Grid>
     );
