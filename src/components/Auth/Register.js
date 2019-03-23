@@ -17,7 +17,8 @@ class Register extends React.Component {
     email: "",
     password: "",
     passwordConfirmation: "",
-    errors: []
+    errors: [],
+    loading:false
   };
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
@@ -67,21 +68,24 @@ class Register extends React.Component {
 
   handleSubmit = event => {
     if (this.isFormValid()) {
+      this.setState({errors:[],loading:true})
       event.preventDefault();
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then(createdUser => {
           console.log(createdUser);
+          this.setState({loading:false})
         })
         .catch(err => {
           console.log(err);
+          this.setState({ errors:this.state.errors.concat(err),loading:false})
         });
     }
   };
 
   render() {
-    const { username, email, password, passwordConfirmation,errors } = this.state;
+    const { username, email, password, passwordConfirmation,errors,loading } = this.state;
 
     return (
       <Grid textAlign="center" verticalAlign="middle" className="app">
@@ -94,7 +98,7 @@ class Register extends React.Component {
             <Segment stacked>
               <Form.Input
                 fluid
-                name="username"
+                name="username" 
                 icon="user"
                 iconPosition="left"
                 placeholder="username"
@@ -132,7 +136,8 @@ class Register extends React.Component {
                 value={passwordConfirmation}
                 type="password"
               />
-              <Button color="orange" fluid size="large">
+              <Button disabled={loading}
+              className={loading?'loading':''} color="orange" fluid size="large">
                 Submit
               </Button>
               <Message>
