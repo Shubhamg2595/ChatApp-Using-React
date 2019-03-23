@@ -1,5 +1,5 @@
 import React from "react";
-
+import firebase from "firebase";
 import {
   Grid,
   Form,
@@ -21,12 +21,30 @@ class Login extends React.Component {
   displayErrors = errors =>
     errors.map((error, i) => <p key={i}>{error.message}</p>);
 
+  handleChange = event => {
+    this.setState({ [event.target.name]: event.target.value });
+  };
   handleSubmit = event => {
-    if (this.isFormValid()) {
+    if (this.isFormValid(this.state)) {
       this.setState({ errors: [], loading: true });
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(this.state.email, this.state.password)
+        .then(signedInUser => {
+          console.log(signedInUser);
+        })
+        .catch(err => {
+          console.log(err);
+          this.setState({
+            errors: this.state.errors.concat(err),
+            loading: false
+          });
+        });
       event.preventDefault();
     }
   };
+
+  isFormValid = ({ email, password }) => email && password;
 
   handleInputError = (errors, inputName) => {
     return errors.some(error => error.message.toLowerCase().includes(inputName))
@@ -40,7 +58,7 @@ class Login extends React.Component {
       <Grid textAlign="center" verticalAlign="middle" className="app">
         <Grid.Column style={{ maxWidth: 450 }}>
           <Header as="h1" icon color="violet" textAlign="center">
-            <Icon name="puzzle piece" color="orange" />
+            <Icon name="code branch" color="violet" />
             Login to DevChat
           </Header>
           <Form onSubmit={this.handleSubmit} size="large">
