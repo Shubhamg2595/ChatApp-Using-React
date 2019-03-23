@@ -16,23 +16,64 @@ class Register extends React.Component {
     username: "",
     email: "",
     password: "",
-    passwordConfirmation: ""
+    passwordConfirmation: "",
+    errors: []
   };
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
 
+  isFormValid = () => {
+    let errors = [];
+    let error;
+    if (this.isFormEmpty(this.state)) {
+      //throw errors
+      error = { message: "Fill in all the Fields" };
+      this.setState({ errors: errors.concat(error) });
+      return false; //indicates we should not perform handle submit
+    } else if (!this.isPasswordValid(this.state)) {
+      //throw errors
+      error = {message:"Password is Invalid"}
+      this.setState({errors:errors.concat(error)})
+      return false
+    } else {
+      //form is valid
+      return true;
+    }
+  };
+
+  isFormEmpty = ({ username, email, password, passwordConfirmation }) => {
+    //if we have length of 0 for any of these inputs , function will return True
+    return (
+      !username.length ||
+      !email.length ||
+      !password.length ||
+      !passwordConfirmation.length
+    );
+  };
+
+  isPasswordValid = ({ password, passwordConfirmation }) => {
+    if (password.length < 6 || passwordConfirmation.length < 6) {
+      return false;
+    } else if (password !== passwordConfirmation) {
+      return false;
+    } else {
+      return true;
+    }
+  };
   handleSubmit = event => {
-    event.preventDefault();
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(this.state.email, this.state.password)
-      .then(createdUser => {
-        console.log(createdUser);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    if (this.isFormValid()) {
+      event.preventDefault();
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(this.state.email, this.state.password)
+        .then(createdUser => {
+          console.log(createdUser);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
   };
 
   render() {
