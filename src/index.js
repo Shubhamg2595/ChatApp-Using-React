@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-
-import App from "./components/App";
+import App from './components/app'
 import Login from "./components/Auth/Login";
 import Register from "./components/Auth/Register";
 import "semantic-ui-css/semantic.min.css";
