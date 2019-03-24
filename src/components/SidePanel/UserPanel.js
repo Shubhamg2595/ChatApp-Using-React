@@ -1,10 +1,12 @@
 import React from "react";
 import { Grid, Header, Icon, Dropdown } from "semantic-ui-react";
-import firebase from '../../firebase'
+import firebase from "../../firebase";
+import { connect } from "react-redux";
+
 class UserPanel extends React.Component {
   dropDownOptions = () => [
     {
-      key:'user',
+      key: "user",
       text: (
         <span>
           Signed in as<strong> User</strong>
@@ -13,23 +15,24 @@ class UserPanel extends React.Component {
       disabled: true
     },
     {
-      key:'avatar',
+      key: "avatar",
       text: <span>Change Avatar</span>
     },
     {
-      key:'signout',
+      key: "signout",
       text: <span onClick={this.handleSignOut}>Sign Out</span>
     }
   ];
 
-  handleSignOut = () =>{
+  handleSignOut = () => {
     firebase
-    .auth()
-    .signOut()
-    .then(()=>console.log('signed out!'))
-  }
+      .auth()
+      .signOut()
+      .then(() => console.log("signed out!"));
+  };
 
   render() {
+    console.log(this.props.currentUser);
     return (
       <Grid style={{ background: "4c3c4c" }}>
         <Grid.Column>
@@ -53,4 +56,10 @@ class UserPanel extends React.Component {
   }
 }
 
-export default UserPanel;
+{
+  /*using destructure to directly access the user instead of taking the entire state */
+}
+const mapStateToProps = state => ({
+  currentUser: state.user.currentUser
+});
+export default connect(mapStateToProps)(UserPanel);
