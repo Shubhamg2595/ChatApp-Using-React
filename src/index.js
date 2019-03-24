@@ -12,6 +12,14 @@ import {
   withRouter
 } from "react-router-dom";
 import firebase from "firebase";
+import { createStore } from "redux";
+import { Provider } from "react-redux";
+import { composeWithDevTools } from "redux-devtools-extension";
+
+import rootReducer from "./reducers";
+
+const store = createStore(rootReducer, composeWithDevTools());
+
 class Root extends React.Component {
   //checking whether there is a user logged in to our app
   componentDidMount() {
@@ -37,8 +45,10 @@ class Root extends React.Component {
 const RootWithAuth = withRouter(Root);
 
 ReactDOM.render(
-  <Router>
-    <RootWithAuth />
-  </Router>,
+  <Provider store={store}>
+    <Router>
+      <RootWithAuth />
+    </Router>
+  </Provider>,
   document.getElementById("root")
 );
