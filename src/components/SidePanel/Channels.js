@@ -1,5 +1,7 @@
 import React from "react";
 import { Menu, Icon, Modal, Form, Input, Button } from "semantic-ui-react";
+import {connect} from 'react-redux'
+import {setCurrentChannel} from '../../actions'
 import firebase from "../../firebase";
 class Channels extends React.Component {
   state = {
@@ -14,11 +16,18 @@ class Channels extends React.Component {
 
   closeModal = () => this.setState({ modal: false });
 
+  isFormValid = ({ channelName, channelDetails }) =>
+    channelName && channelDetails;
+
   handleSubmit = event => {
     event.preventDefault();
     if (this.isFormValid(this.state)) {
       this.addChannel();
     }
+  };
+
+  handleChange = event => {
+    this.setState({ [event.target.name]: event.target.value });
   };
 
   componentDidMount() {
@@ -61,12 +70,17 @@ class Channels extends React.Component {
       });
   };
 
+  
+  changeChannel = channel => {
+    this.props.setCurrentChannel(channel)
+  };
+
   displayChannels = channels =>
     channels.length > 0 &&
     channels.map(channel => (
       <Menu.Item
         key={channel.id}
-        onClick={() => console.log(channel)}
+        onClick={() => this.changeChannel(channel)}
         name={channel.name}
         style={{ opacity: 0.7 }}
       >
@@ -74,12 +88,6 @@ class Channels extends React.Component {
       </Menu.Item>
     ));
 
-  handleChange = event => {
-    this.setState({ [event.target.name]: event.target.value });
-  };
-
-  isFormValid = ({ channelName, channelDetails }) =>
-    channelName && channelDetails;
 
   render() {
     const { channels, modal } = this.state;
@@ -135,4 +143,8 @@ class Channels extends React.Component {
   }
 }
 
-export default Channels;
+const mapStateToProps = state=> {
+  channel:state.channel
+}
+
+export default connect(null,{setCurrentChannel})(Channels);
