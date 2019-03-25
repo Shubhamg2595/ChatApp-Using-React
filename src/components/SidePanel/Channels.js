@@ -36,6 +36,11 @@ class Channels extends React.Component {
     this.addListeners();
   }
 
+  //we need to remove the listeners when our app goes to different route
+  componentWillUnmount(){
+    this.removeListeners();
+
+  }
   addListeners = () => {
     let loadedChannels = [];
     this.state.channelsRef.on("child_added", snap => {
@@ -44,6 +49,10 @@ class Channels extends React.Component {
     });
   };
 
+
+  removeListeners = () => {
+    this.state.channelsRef.off();
+  }
   setFirstChannel = () => {
     const firstChannel = this.state.channels[0];
     if (this.state.firstLoad && this.state.channels.length > 0) {
