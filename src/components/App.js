@@ -5,24 +5,28 @@ import ColorPanel from "./ColorPanel/ColorPanel";
 import MetaPanel from "./MetaPanel/MetaPanel";
 import SidePanel from "./SidePanel/SidePanel";
 import Messages from "./Messages/Messages";
-import {connect} from 'react-redux'
-const App = ({currentUser}) => (
-  <Grid columns="equal" className="app"style={{background:'#eee'}}>
-    <ColorPanel />
-    <SidePanel currentUser = {currentUser} />
-    <Grid.Column style={{marginLeft:320}}>
+import { connect } from 'react-redux'
+const App = ({ currentUser, currentChannel }) => (
+    <Grid columns="equal" className="app" style={{ background: '#eee' }}>
+        <ColorPanel />
+        <SidePanel currentUser={currentUser} />
+        <Grid.Column style={{ marginLeft: 320 }}>
 
-    <Messages />
-    </Grid.Column>
-    
-    <Grid.Column width={4}>
-    <MetaPanel />
-    </Grid.Column>
-  </Grid>
+            <Messages
+                key={currentChannel && currentChannel.id}
+                currentChannel={currentChannel}
+                currentUser={currentUser} />
+        </Grid.Column>
+
+        <Grid.Column width={4}>
+            <MetaPanel />
+        </Grid.Column>
+    </Grid>
 );
 
 const mapStateToProps = state => ({
-  currentUser :state.user.currentUser
+    currentUser: state.user.currentUser,
+    currentChannel: state.channel.currentChannel
 })
 
 export default connect(mapStateToProps)(App);
