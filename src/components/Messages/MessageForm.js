@@ -60,9 +60,12 @@ class MessageForm extends React.Component {
   }
 
   render() {
-    const { errors, message,loading } = this.state;
+
+    const { errors, message, loading } = this.state;
 
     return (
+      
+    /* Making sure this is added in the GitHub */ 
       <Segment className="message__form">
         <Input
           fluid
