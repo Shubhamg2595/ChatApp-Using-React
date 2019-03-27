@@ -12,34 +12,6 @@ class Messages extends React.Component {
     messagesLoading: true,
     channel: this.props.currentChannel,
     user: this.props.currentUser
-<<<<<<< HEAD
-  }
-
-  componentDidMount() {
-    const { channel, user } = this.state;
-    if (channel && user) {
-      this.addListeners(channel.id);
-    }
-  }
-
-
-  addListeners = channelId => {
-    this.addMessageListeners(channelId);
-  }
-
-  addMessageListeners = channelId => {
-    let loadedMessages = [];
-    this.state.messagesRef.child(channelId).on('child_added', snap => {
-      loadedMessages.push(snap.val())
-      console.log(loadedMessages)
-    })
-  }
-
-
-
-  render() {
-    const { messagesRef, channel, user } = this.state;
-=======
   };
 
   componentDidMount() {
@@ -79,7 +51,6 @@ class Messages extends React.Component {
   render() {
     const { messagesRef, messages, channel, user } = this.state;
 
->>>>>>> 8e07dd932829ca28dd958cd61d783298d9b5cfe7
     return (
       <React.Fragment>
         <MessagesHeader />
@@ -89,16 +60,11 @@ class Messages extends React.Component {
             
           </Comment.Group>
         </Segment>
-<<<<<<< HEAD
-        <MessageForm messagesRef={messagesRef}
-          currentChannel={channel} currentUser={user} />
-=======
         <MessageForm
           messagesRef={messagesRef}
           currentChannel={channel}
           currentUser={user}
         />
->>>>>>> 8e07dd932829ca28dd958cd61d783298d9b5cfe7
       </React.Fragment>
     );
   }
