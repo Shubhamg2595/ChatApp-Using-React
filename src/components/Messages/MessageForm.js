@@ -1,14 +1,15 @@
 import React from "react";
 import { Segment, Button, Input } from "semantic-ui-react";
 import firebase from '../../firebase'
-
+import FileModal from './FileModal'
 class MessageForm extends React.Component {
   state = {
     message: '',
     channel: this.props.currentChannel,
     user: this.props.currentUser,
     isloading: false,
-    errors: []
+    errors: [],
+    modal: false
   }
 
 
@@ -23,7 +24,7 @@ class MessageForm extends React.Component {
       user: {
         id: this.state.user.uid,
         name: this.state.user.displayName,
-        avatar: this.state.message
+        avatar: this.state.user.photoURL
       },
       content: this.state.message
     }
@@ -59,13 +60,23 @@ class MessageForm extends React.Component {
     }
   }
 
+  //  HANDLING MODALS
+  openModal = () => { this.setState({ modal: true }) }
+  closeModal = () => { this.setState({ modal: false }) }
+
+  //uploading files
+  uploadFile = (file, metadata) => {
+    console.log(file, metadata)
+  }
+
+
   render() {
 
-    const { errors, message, loading } = this.state;
+    const { errors, message, isloading, modal } = this.state;
 
     return (
-      
-    /* Making sure this is added in the GitHub */ 
+
+      /* Making sure this is added in the GitHub */
       <Segment className="message__form">
         <Input
           fluid
@@ -77,10 +88,11 @@ class MessageForm extends React.Component {
           labelPosition="left"
           className={errors.some(error => error.message.includes('message')) ? "error" : ''}
           placeholder="write your message"
+
         />
         <Button.Group icon widths="2">
           <Button
-            disabled={loading}
+            disabled={isloading}
             onClick={this.sendMessage}
             color="orange"
             content="Add Reply"
@@ -90,10 +102,16 @@ class MessageForm extends React.Component {
           />
           <Button
             color="teal"
+            onClick={this.openModal}
             content="Upload Media"
             labelPosition="right"
             icon="cloud upload"
           />
+          <FileModal
+            modal={modal}
+            closeModal={this.closeModal}
+            uploadFile={this.uploadFile}
+            />
         </Button.Group>
       </Segment>
     );
