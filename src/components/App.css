@@ -27,3 +27,7 @@ body,
   border-left: 2px solid orange;
   padding-left: 8px;
 }
+
+.message__self {
+  padding: 1em;
+}
