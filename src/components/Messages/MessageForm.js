@@ -1,8 +1,9 @@
 import React from "react";
 import { Segment, Button, Input } from "semantic-ui-react";
-import uuidv4 from 'uuid/v4'
+import uuidv4 from "uuid/v4";
 import firebase from "../../firebase";
 import FileModal from "./FileModal";
+import ProgressBar from "./ProgressBar";
 class MessageForm extends React.Component {
   state = {
     storageRef: firebase.storage().ref(),
@@ -139,7 +140,8 @@ class MessageForm extends React.Component {
   };
 
   render() {
-    const { errors, message, isloading, modal } = this.state;
+    // prettier-ignore
+    const { errors, message, isloading, modal,uploadState,percentUploaded } = this.state;
 
     return (
       /* Making sure this is added in the GitHub */
@@ -170,17 +172,21 @@ class MessageForm extends React.Component {
           />
           <Button
             color="teal"
-             onClick={this.openModal}
+            onClick={this.openModal}
             content="Upload Media"
             labelPosition="right"
             icon="cloud upload"
           />
-          <FileModal
-            modal={modal}
-            closeModal={this.closeModal}
-            uploadFile={this.uploadFile}
-          />
         </Button.Group>
+        <FileModal
+          modal={modal}
+          closeModal={this.closeModal}
+          uploadFile={this.uploadFile}
+        />
+        <ProgressBar
+          uploadState={uploadState}
+          percentUploaded={percentUploaded}
+        />
       </Segment>
     );
   }

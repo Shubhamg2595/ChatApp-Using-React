@@ -31,3 +31,8 @@ body,
 .message__self {
   padding: 1em;
 }
+
+/*Progress Bar*/
+.progress__bar {
+  margin: 0.3em 0 0 0 !important;
+}
