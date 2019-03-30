@@ -13,6 +13,7 @@ class Messages extends React.Component {
     messages: [],
     messagesLoading: true,
     channel: this.props.currentChannel,
+    isChannelStarred:false,
     user: this.props.currentUser,
     numUniqueUsers: "",
     searchTerm: "",
@@ -51,7 +52,20 @@ class Messages extends React.Component {
     return privateChannel?privateMessagesRef:messagesRef
   }
 
+   handleStar = () => {
+     this.setState(prevState => ({
+       isChannelStarred : !prevState.isChannelStarred
+     }),()=>this.starChannel())
+   }
   
+   starChannel = () => {
+     if(this.state.isChannelStarred){
+       console.log('starred')
+     }
+     else{
+       console.log('unstarred')
+     }
+   }
   countUniqueUsers = messages => {
     const uniqueUsers = messages.reduce((acc, message) => {
       if (!acc.includes(message.user.name)) {
@@ -107,7 +121,7 @@ class Messages extends React.Component {
 
   render() {
     //prettier-ignore
-    const { messagesRef, messages, channel, user, numUniqueUsers, searchTerm, searchResults,searchLoading,privateChannel } = this.state;
+    const { messagesRef, messages, channel, user, numUniqueUsers, searchTerm, searchResults,searchLoading,privateChannel,isChannelStarred } = this.state;
 
     return (
       <React.Fragment>
@@ -117,6 +131,8 @@ class Messages extends React.Component {
           handleSearchChange={this.handleSearchChange}
           searchLoading={searchLoading}
           isPrivateChannel={privateChannel}
+          handleStar={this.handleStar}
+          isChannelStarred={isChannelStarred}
         />
         <Segment>
           <Comment.Group className="messages">
