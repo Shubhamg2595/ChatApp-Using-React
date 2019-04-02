@@ -1,4 +1,5 @@
 import React from "react";
+import firebase from '../../firebase'
 // prettier-ignore
 import { Grid, Header, Icon, Dropdown, Image, Modal, Input, Button } from "semantic-ui-react";
 import firebase from "../../firebase";
@@ -10,7 +11,12 @@ class UserPanel extends React.Component {
     modal: false,
     previewImage: '',
     croppedImage: '',
-    blob: ''
+    blob: '',
+    storageRef:firebase.storage().ref(),
+    userRef:firebase.auth().currentUser,
+    metadata:{
+      contentType:'image/jpeg'
+    }
   };
 
   openModal = () => {
@@ -70,6 +76,19 @@ class UserPanel extends React.Component {
         })
       })
     }
+  }
+
+  uploadCroppedImage = () => {
+      const {storageRef,usersRef,blob} = this.state;
+
+      storageRef
+      .child(`avatars/user-${userRef.uid}`)
+      .put(blob,metadata)
+      .then(snap=>{
+        snap.ref.getDownloadURL().then(downloadURL => {
+          this.setState({uploadCroppedImage:downloadURL})
+        })
+      })
   }
 
   render() {
@@ -141,7 +160,7 @@ class UserPanel extends React.Component {
 
             </Modal.Content>
                 <Modal.Actions>
-                  {croppedImage && <Button color="green" inverted>
+                  {croppedImage && <Button color="green" inverted onClick={this.uploadCroppedImage}>
                     <Icon name="save" />Change Avatar
             </Button>}
                   <Button color="green" inverted onClick={this.handleCropImage}>
