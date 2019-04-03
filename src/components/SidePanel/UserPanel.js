@@ -2,7 +2,7 @@ import React from "react";
 import firebase from '../../firebase'
 // prettier-ignore
 import { Grid, Header, Icon, Dropdown, Image, Modal, Input, Button } from "semantic-ui-react";
-import firebase from "../../firebase";
+
 import AvatarEditor from 'react-avatar-editor';
 
 class UserPanel extends React.Component {
@@ -11,11 +11,13 @@ class UserPanel extends React.Component {
     modal: false,
     previewImage: '',
     croppedImage: '',
+    uploadCroppedImage: '',
     blob: '',
-    storageRef:firebase.storage().ref(),
-    userRef:firebase.auth().currentUser,
-    metadata:{
-      contentType:'image/jpeg'
+    storageRef: firebase.storage().ref(),
+    userRef: firebase.auth().currentUser,
+    usersRef: firebase.database().ref('users'),
+    metadata: {
+      contentType: 'image/jpeg'
     }
   };
 
@@ -79,15 +81,39 @@ class UserPanel extends React.Component {
   }
 
   uploadCroppedImage = () => {
-      const {storageRef,usersRef,blob} = this.state;
+    const { storageRef, userRef, blob,metadata } = this.state;
 
-      storageRef
+    storageRef
       .child(`avatars/user-${userRef.uid}`)
-      .put(blob,metadata)
-      .then(snap=>{
+      .put(blob, metadata)
+      .then(snap => {
         snap.ref.getDownloadURL().then(downloadURL => {
-          this.setState({uploadCroppedImage:downloadURL})
+          this.setState({ uploadCroppedImage: downloadURL }, () => this.changeAvatar())
         })
+      })
+  }
+
+  changeAvatar = () => {
+    this.state.userRef
+      .updateProfile({
+        photoURL: this.state.uploadCroppedImage
+      })
+      .then(() => {
+        console.log('new avatar image uploaded')
+        this.closeModal();
+      })
+      .catch(err => {
+        console.error(err)
+      })
+
+    this.state.usersRef
+      .child(this.state.user.uid)
+      .update({ avatar: this.state.uploadCroppedImage })
+      .then(() => {
+        console.log('user avatar updated')
+      })
+      .catch(err => {
+        console.error(err)
       })
   }
 
@@ -151,29 +177,29 @@ class UserPanel extends React.Component {
                         height={100}
                         src={croppedImage}
                       />
-                        )}
-                        
+                    )}
+
                   </Grid.Column>
 
                 </Grid.Row>
               </Grid>
 
             </Modal.Content>
-                <Modal.Actions>
-                  {croppedImage && <Button color="green" inverted onClick={this.uploadCroppedImage}>
-                    <Icon name="save" />Change Avatar
+            <Modal.Actions>
+              {croppedImage && <Button color="green" inverted onClick={this.uploadCroppedImage}>
+                <Icon name="save" />Change Avatar
             </Button>}
-                  <Button color="green" inverted onClick={this.handleCropImage}>
-                    <Icon name="image" />Preview
+              <Button color="green" inverted onClick={this.handleCropImage}>
+                <Icon name="image" />Preview
             </Button>
-                  <Button color="red" inverted onClick={this.closeModal}>
-                    <Icon name="remove" />Cancel
+              <Button color="red" inverted onClick={this.closeModal}>
+                <Icon name="remove" />Cancel
             </Button>
-                </Modal.Actions>
+            </Modal.Actions>
           </Modal>
         </Grid.Column>
       </Grid>
-          );
-        }
-      }
-      export default UserPanel;
+    );
+  }
+}
+export default UserPanel;
