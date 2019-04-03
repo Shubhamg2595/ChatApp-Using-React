@@ -6,7 +6,7 @@ import firebase from "../../firebase";
 import Message from "./Message";
 import MessagesHeader from "./MessagesHeader";
 import MessageForm from "./MessageForm";
-
+import Typing from './Typing'
 class Messages extends React.Component {
   state = {
     privateChannel: this.props.isPrivateChannel,
@@ -193,6 +193,10 @@ class Messages extends React.Component {
             {searchTerm
               ? this.displayMessages(searchResults)
               : this.displayMessages(messages)}
+              <div style={{display:'flex',alignItems:'center'}}>
+              <span className="user__typing">shubham is typing</span><Typing />
+
+              </div>
           </Comment.Group>
         </Segment>
         <MessageForm
