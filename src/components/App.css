@@ -10,6 +10,13 @@ body,
 .menu {
   padding-bottom: 2em;
 }
+
+/*emojiPicker*/
+
+.emojipicker {
+  position: absolute;
+}
+
 /*Messages.js*/
 .messages {
   height: 440px;
@@ -62,57 +69,55 @@ body,
   transform: rotate(225deg);
 }
 
-
 /*Typing.js*/
 
 .user__typing {
   font-style: italic;
   font-weight: bold;
-  margin-right: 3px
+  margin-right: 3px;
 }
 
-.typing{
-  width:5em;
-  height:2em;
-  position:relative;
-  padding:10px;
-  margin-top:5px;
+.typing {
+  width: 5em;
+  height: 2em;
+  position: relative;
+  padding: 10px;
+  margin-top: 5px;
   margin-left: 5px;
-  background:#e6e6e6;
-  border-radius:20px;
+  background: #e6e6e6;
+  border-radius: 20px;
 }
 
-.typing__dot{
-  float:left;
-  width:8px;
-  height:8px;
+.typing__dot {
+  float: left;
+  width: 8px;
+  height: 8px;
   margin: 0 4px;
-  background:#8d8c91;
+  background: #8d8c91;
   border-radius: 50%;
   opacity: 0;
   animation: loadingFade 1s infinite;
 }
 
-.typing__dot:nth-child(1){
-  animation-delay:0s
+.typing__dot:nth-child(1) {
+  animation-delay: 0s;
 }
 
-.typing__dot:nth-child(2){
-  animation-delay:0.2s
+.typing__dot:nth-child(2) {
+  animation-delay: 0.2s;
 }
-.typing__dot:nth-child(3){
-  animation-delay:0.4s
+.typing__dot:nth-child(3) {
+  animation-delay: 0.4s;
 }
 
 @keyframes loadingFade {
   0% {
     opacity: 0;
-
   }
-  50%{
+  50% {
     opacity: 0.8;
   }
-  100%{
+  100% {
     opacity: 0;
   }
 }

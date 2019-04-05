@@ -12,7 +12,7 @@ import {
   Label,
   Segment
 } from "semantic-ui-react";
-import { GithubPicker } from "react-color";
+import { PhotoshopPicker } from "react-color";
 class ColorPanel extends React.Component {
   state = {
     modal: false,
@@ -111,7 +111,7 @@ class ColorPanel extends React.Component {
           <Modal.Content>
             <Segment inverted>
               <Label content="Primary Color" />
-              <GithubPicker
+              <PhotoshopPicker
                 onChange={this.handleChangePrimary}
                 color={primary}
               />
@@ -119,7 +119,7 @@ class ColorPanel extends React.Component {
 
             <Segment inverted>
               <Label content="Secondary Color" />
-              <GithubPicker
+              <PhotoshopPicker
                 onChange={this.handleChangeSecondary}
                 color={secondary}
               />
