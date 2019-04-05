@@ -7,6 +7,7 @@ import Message from "./Message";
 import MessagesHeader from "./MessagesHeader";
 import MessageForm from "./MessageForm";
 import Typing from "./Typing";
+import Skeleton from './Skeleton'
 class Messages extends React.Component {
   state = {
     privateChannel: this.props.isPrivateChannel,
@@ -233,16 +234,26 @@ class Messages extends React.Component {
     setTimeout(() => this.setState({ searchLoading: false }), 500);
   };
 
+  displayMessageSkeleton = loading => (
+    loading ? (
+      <React.Fragment>
+      {[...Array(10)].map((_,i)=>(
+        <Skeleton key={i} />
+      ))}
+      </React.Fragment>
+    ):null
+  )
+
   render() {
     //prettier-ignore
-    const { messagesRef, messages, channel, user, numUniqueUsers, searchTerm, searchResults, searchLoading, privateChannel, isChannelStarred, typingUsers } = this.state;
+    const { messagesRef, messages, channel, user, numUniqueUsers, searchTerm, searchResults, searchLoading, privateChannel, isChannelStarred, typingUsers,messagesLoading } = this.state;
 
     return (
       <React.Fragment>
         <MessagesHeader
           channelName={this.displayChannelName(channel)}
           numUniqueUsers={numUniqueUsers}
-          handleSearchChange={this.handleSearchChange}
+          handleSearchChange=  {this.handleSearchChange}
           searchLoading={searchLoading}
           isPrivateChannel={privateChannel}
           handleStar={this.handleStar}
@@ -250,7 +261,8 @@ class Messages extends React.Component {
         />
         <Segment>
           <Comment.Group className="messages">
-            {searchTerm
+          {this.displayMessageSkeleton(messagesLoading)}  
+          {searchTerm
               ? this.displayMessages(searchResults)
               : this.displayMessages(messages)}
             {this.displayTypingUsers(typingUsers)}
