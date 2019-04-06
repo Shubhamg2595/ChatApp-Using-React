@@ -17,7 +17,16 @@ class Starred extends React.Component {
     }
   }
 
-  addListeners = (userId) => {
+  componentWillUnmount() {
+    this.removeListeners();
+  }
+
+  removeListeners = () => {
+    this.state.usersRef.child(`${this.state.user.uid}/starred`).off();
+    this.state.presenceRef.off();
+    this.state.connectedRef.off();
+  };
+  addListeners = userId => {
     this.state.usersRef
       .child(userId)
       .child("starred")
@@ -28,16 +37,16 @@ class Starred extends React.Component {
         });
       });
 
-      this.state.usersRef
+    this.state.usersRef
       .child(userId)
-      .child('starred')
-      .on('child_removed',snap=>{
-        const channelToRemove = {id:snap.key,...snap.val()}
-        const filteredChannels = this.state.starredChannels.filter(channel=>{
-          return channel.id!==channelToRemove.id
-        })
-        this.setState({starredChannels:filteredChannels})
-      })
+      .child("starred")
+      .on("child_removed", snap => {
+        const channelToRemove = { id: snap.key, ...snap.val() };
+        const filteredChannels = this.state.starredChannels.filter(channel => {
+          return channel.id !== channelToRemove.id;
+        });
+        this.setState({ starredChannels: filteredChannels });
+      });
   };
 
   displayChannels = starredChannels =>

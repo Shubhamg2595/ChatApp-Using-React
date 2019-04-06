@@ -7,7 +7,7 @@ import Message from "./Message";
 import MessagesHeader from "./MessagesHeader";
 import MessageForm from "./MessageForm";
 import Typing from "./Typing";
-import Skeleton from './Skeleton'
+import Skeleton from "./Skeleton";
 class Messages extends React.Component {
   state = {
     privateChannel: this.props.isPrivateChannel,
@@ -25,27 +25,51 @@ class Messages extends React.Component {
     searchResults: [],
     typingRef: firebase.database().ref("typing"),
     typingUsers: [],
-    connectedRef: firebase.database().ref(".info/connected")
+    connectedRef: firebase.database().ref(".info/connected"),
+    listeners: []
   };
 
   componentDidMount() {
-    const { channel, user } = this.state;
+    const { channel, user, listeners } = this.state;
 
     if (channel && user) {
+      this.removeListener(listeners);
       this.addListeners(channel.id);
       this.addUserStarsListener(channel.id, user.uid);
     }
   }
 
-  componentDidUpdate(prevProps,prevState){
-    if(this.messagesEnd){
+  componentWillUnmount() {
+    this.removeListener(this.state.listeners);
+    this.state.connectedRef.off();
+  }
+  removeListener = listeners => {
+    listeners.forEach(listener => {
+      listener.ref.child(listener.id).off(listener.event);
+    });
+  };
+
+  addToListeners = (id, ref, event) => {
+    const index = this.state.listeners.findIndex(listener => {
+      return (
+        listener.id === id && listener.ref === ref && listener.event === event
+      );
+    });
+    if (index === -1) {
+      const newListener = { id, ref, event };
+      this.setState({ listeners: this.state.listeners.concat(newListener) });
+    }
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.messagesEnd) {
       this.scrollToBottom();
     }
   }
 
   scrollToBottom = () => {
-    this.messagesEnd.scrollIntoView({behavior:'smooth'})
-  }
+    this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+  };
 
   addListeners = channelId => {
     this.addMessageListener(channelId);
@@ -63,7 +87,7 @@ class Messages extends React.Component {
         this.setState({ typingUsers });
       }
     });
-
+    this.addToListeners(channelId, this.state.typingRef, "child_added");
     this.state.typingRef.child(channelId).on("child_removed", snap => {
       const index = typingUsers.findIndex(user => user.id === snap.key);
       if (index !== -1) {
@@ -71,6 +95,7 @@ class Messages extends React.Component {
         this.setState({ typingUsers });
       }
     });
+    this.addToListeners(channelId, this.state.typingRef, "child_removed");
 
     this.state.connectedRef.on("value", snap => {
       if (snap.val() === true) {
@@ -111,6 +136,7 @@ class Messages extends React.Component {
       this.countUniqueUsers(loadedMessages);
       this.countUserPosts(loadedMessages);
     });
+    this.addToListeners(channelId, ref, "child_added");
   };
 
   getMessagesRef = () => {
@@ -234,15 +260,14 @@ class Messages extends React.Component {
     setTimeout(() => this.setState({ searchLoading: false }), 500);
   };
 
-  displayMessageSkeleton = loading => (
+  displayMessageSkeleton = loading =>
     loading ? (
       <React.Fragment>
-      {[...Array(10)].map((_,i)=>(
-        <Skeleton key={i} />
-      ))}
+        {[...Array(10)].map((_, i) => (
+          <Skeleton key={i} />
+        ))}
       </React.Fragment>
-    ):null
-  )
+    ) : null;
 
   render() {
     //prettier-ignore
@@ -253,7 +278,7 @@ class Messages extends React.Component {
         <MessagesHeader
           channelName={this.displayChannelName(channel)}
           numUniqueUsers={numUniqueUsers}
-          handleSearchChange=  {this.handleSearchChange}
+          handleSearchChange={this.handleSearchChange}
           searchLoading={searchLoading}
           isPrivateChannel={privateChannel}
           handleStar={this.handleStar}
@@ -261,8 +286,8 @@ class Messages extends React.Component {
         />
         <Segment>
           <Comment.Group className="messages">
-          {this.displayMessageSkeleton(messagesLoading)}  
-          {searchTerm
+            {this.displayMessageSkeleton(messagesLoading)}
+            {searchTerm
               ? this.displayMessages(searchResults)
               : this.displayMessages(messages)}
             {this.displayTypingUsers(typingUsers)}
