@@ -100,6 +100,7 @@ class Channels extends React.Component {
     this.setState({ notifications: notifications });
   };
 
+  
   removeListeners = () => {
     this.state.channelsRef.off();
     this.state.channels.forEach(channel => {

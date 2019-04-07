@@ -23,8 +23,7 @@ class Starred extends React.Component {
 
   removeListeners = () => {
     this.state.usersRef.child(`${this.state.user.uid}/starred`).off();
-    this.state.presenceRef.off();
-    this.state.connectedRef.off();
+  
   };
   addListeners = userId => {
     this.state.usersRef
